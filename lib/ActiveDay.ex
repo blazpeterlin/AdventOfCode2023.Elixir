@@ -14,4 +14,52 @@ defmodule ActiveDay do
     # x = lines
     res
   end
+
+  def findFirstNum(ln, numsMapped) do
+    case Regex.run(~r/(\d|one|two|three|four|five|six|seven|eight|nine)/, ln) do
+      [x,_] -> if Map.has_key?(numsMapped, x) do [numsMapped[x]] else [String.to_integer(x)] end
+      _ -> []
+    end
+  end
+
+  def findLastNum(ln, numsMapped) do
+
+    res =
+      0 .. String.length(ln) - 1
+      |> Enum.reverse
+      |> (Enum.map (fn startIdx -> String.slice(ln, startIdx, String.length(ln)-startIdx) end))
+      |> (Enum.map (fn str -> findFirstNum(str,numsMapped) end))
+      |> Enum.concat
+    hd res
+  end
+
+  def solve2 do
+    {:ok, input} = File.read("lib/input.txt");
+    lines = String.split(input, "\r\n") |> Enum.filter(fn x -> x != "" end)
+
+    nums = ["one","two","three","four","five","six","seven","eight","nine"]
+    numsMapped = nums |> (Enum.with_index()) |> (Enum.map (fn {word,idx} -> {word,idx+1} end)) |> Map.new
+
+
+    linesFirst = Enum.map(lines, &findFirstNum(&1, numsMapped)) |> Enum.map(fn x -> hd x end)
+    linesLast = Enum.map(lines, &findLastNum(&1, numsMapped))
+    # wat = (lines1 |> hd |> hd) |> Enum.map(fn tkn -> if Map.has_key?(numsMapped, tkn) do numsMapped[tkn] else String.to_integer(tkn) end end)
+    # scansHead =
+    #   linesHead
+    #   |> Enum.map(fn [tkn,_] -> if Map.has_key?(numsMapped, tkn) do numsMapped[tkn] else String.to_integer(tkn) end end)
+    # scansLast =
+    #   linesLast
+    #   |> Enum.map(fn [tkn,_] -> if Map.has_key?(numsMapped, tkn) do numsMapped[tkn] else String.to_integer(tkn) end end)
+
+    # res =
+    #   scans
+    #   |> Enum.map(fn tkns -> (hd tkns)*10 + (tkns |> Enum.reverse |> hd) end)
+    #   |> Enum.sum()
+    res =
+      Enum.zip(linesFirst, linesLast)
+      |> Enum.map(fn {a,b} -> a*10+b end)
+      |> Enum.sum()
+    # x = lines
+    res
+  end
 end
