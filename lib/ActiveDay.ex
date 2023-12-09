@@ -1,65 +1,77 @@
+defmodule Game do
+  defstruct [:id, :sets]
+end
+
+defmodule Set do
+  defstruct red: 0, green: 0, blue: 0
+end
+
+
+
 defmodule ActiveDay do
-  def solve1 do
-    {:ok, input} = File.read("lib/input.txt");
-    lines = String.split(input, "\r\n")
-    tokenized =
-      lines
-      |> Enum.filter(fn x -> x != "" end)
-      |> Enum.map(fn x -> (Regex.scan(~r/\d/, x)) |> Enum.concat() |> (Enum.map (&String.to_integer/1)) end) #
-    res =
-      tokenized
-      |> Enum.map(fn tkns -> (hd tkns)*10 + (tkns |> Enum.reverse |> hd) end)
-      |> Enum.sum()
 
-    # x = lines
-    res
+
+  def toSet(str) do
+    descs = str |> (String.split(", ")) |> Enum.map(&String.split(&1, " "))
+
+    state0 = %Set{red: 0, green: 0, blue: 0}
+    r =
+      descs
+      |> List.foldl(state0,
+          fn([strNum, color], s) ->
+            num = strNum |> String.to_integer
+            case color do
+              "red" -> %{s | red: s.red + num}
+              "green" -> %{s | green: s.green + num}
+              "blue" -> %{s | blue: s.blue + num}
+          end
+        end)
+
+    r
   end
 
-  def findFirstNum(ln, numsMapped) do
-    case Regex.run(~r/(\d|one|two|three|four|five|six|seven|eight|nine)/, ln) do
-      [x,_] -> if Map.has_key?(numsMapped, x) do [numsMapped[x]] else [String.to_integer(x)] end
-      _ -> []
-    end
+  def toGame(ln) do
+    [gameHeader, gameDesc] = ln |> String.split(": ")
+    id = gameHeader |> String.split(~r/(\s|\:)/) |> List.last |> String.to_integer()
+    sets = gameDesc |> String.split(~r/;\s/) |> (Enum.map(fn str -> toSet str end))
+    %Game{sets: sets, id: id}
   end
 
-  def findLastNum(ln, numsMapped) do
-
-    res =
-      0 .. String.length(ln) - 1
-      |> Enum.reverse
-      |> (Enum.map (fn startIdx -> String.slice(ln, startIdx, String.length(ln)-startIdx) end))
-      |> (Enum.map (fn str -> findFirstNum(str,numsMapped) end))
-      |> Enum.concat
-    hd res
-  end
-
-  def solve2 do
-    {:ok, input} = File.read("lib/input.txt");
+  def solve1 inputPath do
+    {:ok, input} = File.read(inputPath);
     lines = String.split(input, "\r\n") |> Enum.filter(fn x -> x != "" end)
+    parsedGames = lines |> Enum.map(&toGame(&1))
 
-    nums = ["one","two","three","four","five","six","seven","eight","nine"]
-    numsMapped = nums |> (Enum.with_index()) |> (Enum.map (fn {word,idx} -> {word,idx+1} end)) |> Map.new
+    reqSet = %Set{red: 12, green: 13, blue: 14}
+    possibleGames = parsedGames |> Enum.filter(fn x -> fitsRequirements(x, reqSet) end)
 
-
-    linesFirst = Enum.map(lines, &findFirstNum(&1, numsMapped)) |> Enum.map(fn x -> hd x end)
-    linesLast = Enum.map(lines, &findLastNum(&1, numsMapped))
-    # wat = (lines1 |> hd |> hd) |> Enum.map(fn tkn -> if Map.has_key?(numsMapped, tkn) do numsMapped[tkn] else String.to_integer(tkn) end end)
-    # scansHead =
-    #   linesHead
-    #   |> Enum.map(fn [tkn,_] -> if Map.has_key?(numsMapped, tkn) do numsMapped[tkn] else String.to_integer(tkn) end end)
-    # scansLast =
-    #   linesLast
-    #   |> Enum.map(fn [tkn,_] -> if Map.has_key?(numsMapped, tkn) do numsMapped[tkn] else String.to_integer(tkn) end end)
-
-    # res =
-    #   scans
-    #   |> Enum.map(fn tkns -> (hd tkns)*10 + (tkns |> Enum.reverse |> hd) end)
-    #   |> Enum.sum()
-    res =
-      Enum.zip(linesFirst, linesLast)
-      |> Enum.map(fn {a,b} -> a*10+b end)
-      |> Enum.sum()
-    # x = lines
+    res = possibleGames |> Enum.map(&(&1.id)) |> Enum.sum
     res
+  end
+
+  def fitsRequirements(game, reqSet) do
+    game.sets |> Enum.all?(fn s -> s.red <= reqSet.red && s.green <= reqSet.green && s.blue <= reqSet.blue end)
+  end
+
+  def solve2 inputPath do
+    {:ok, input} = File.read(inputPath);
+    lines = String.split(input, "\r\n") |> Enum.filter(fn x -> x != "" end)
+    parsedGames = lines |> Enum.map(&toGame(&1))
+
+    gameRequirements = parsedGames |> Enum.map(fn game -> getGameRequirements(game) end)
+
+    cubePowers = gameRequirements |> Enum.map(fn set -> set.red * set.green * set.blue end)
+
+
+    res = cubePowers |> Enum.sum
+    res
+  end
+
+  def getGameRequirements(game) do
+    reqInit = %Set{red: 0, green: 0, blue: 0}
+    game.sets
+    |> List.foldl(reqInit, fn(set,req) ->
+      %Set{red: max(set.red, req.red), green: max(set.green, req.green), blue: max(set.blue, req.blue)}
+     end)
   end
 end

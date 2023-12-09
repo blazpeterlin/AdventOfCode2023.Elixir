@@ -6,9 +6,17 @@
     "configurations": [
         {
             "type": "mix_task",
-            "name": "mix (Default task)",
+            "name": "ActiveDay",
             "request": "launch",
             "task": "ActiveDay",
+            "projectDir": "${workspaceRoot}"
+        },
+        {
+            "type": "mix_task",
+            "name": "FinishedDays",
+            "request": "launch",
+            "task": "FinishedDays",
+            "taskArgs": ["--day 1 --part 2"],
             "projectDir": "${workspaceRoot}"
         },
         {
