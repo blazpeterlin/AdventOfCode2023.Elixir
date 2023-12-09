@@ -9,6 +9,7 @@ defmodule Mix.Tasks.FinishedDays do
 
     dayModule = case day do
       1 -> Day01
+      2 -> Day02
     end
 
     dayStr = day |> Integer.to_string |> String.pad_leading(2, "0")
