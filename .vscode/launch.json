@@ -16,7 +16,7 @@
             "name": "FinishedDays",
             "request": "launch",
             "task": "FinishedDays",
-            "taskArgs": ["--day 1 --part 2"],
+            "taskArgs": ["--day 2 --part 2"],
             "projectDir": "${workspaceRoot}"
         },
         {
