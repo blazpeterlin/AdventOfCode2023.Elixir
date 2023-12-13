@@ -3,7 +3,7 @@ defmodule Card do
   defstruct winningNums: [], foundNums: []
 end
 
-defmodule ActiveDay do
+defmodule Day04 do
 
   def solve1 inputPath do
     {:ok, input} = File.read(inputPath);
@@ -13,8 +13,8 @@ defmodule ActiveDay do
       |> Enum.map(
         fn line ->
           splits = String.split(line, ~r/(:|\|)/) |> Enum.map(fn str -> String.trim(str) end)
-          winning = String.split(Enum.at(splits,1), " ", trim: true) |> Enum.map (&String.to_integer(&1))
-          found = String.split(Enum.at(splits,2), " ", trim: true) |> Enum.map (&String.to_integer(&1))
+          winning = String.split(Enum.at(splits,1), " ", trim: true) |> Enum.map(&String.to_integer(&1))
+          found = String.split(Enum.at(splits,2), " ", trim: true) |> Enum.map(&String.to_integer(&1))
           %Card{winningNums: winning, foundNums: found}
         end
       )
@@ -42,8 +42,8 @@ defmodule ActiveDay do
       |> Enum.map(
         fn line ->
           splits = String.split(line, ~r/(:|\|)/) |> Enum.map(fn str -> String.trim(str) end)
-          winning = String.split(Enum.at(splits,1), " ", trim: true) |> Enum.map (&String.to_integer(&1))
-          found = String.split(Enum.at(splits,2), " ", trim: true) |> Enum.map (&String.to_integer(&1))
+          winning = String.split(Enum.at(splits,1), " ", trim: true) |> Enum.map(&String.to_integer(&1))
+          found = String.split(Enum.at(splits,2), " ", trim: true) |> Enum.map(&String.to_integer(&1))
           %Card{winningNums: winning, foundNums: found}
         end
       )
