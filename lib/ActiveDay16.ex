@@ -1,5 +1,5 @@
 
-defmodule ActiveDay15 do
+defmodule ActiveDay16 do
 
   def dictMake name do
     :ets.new(name, [:set, :public, :named_table, read_concurrency: true, write_concurrency: true])
@@ -18,12 +18,17 @@ defmodule ActiveDay15 do
   # dictSet(:myDict, 1,2)
   # {:ok,res} = dictGet(:myDict, 1)
 
+  def hash(tkn) do
+    String.to_charlist(tkn)
+    |> Enum.reduce(0, fn(codepoint,acc) -> rem((acc+codepoint)*17,256) end)
+  end
+
   def solve1 inputPath do
     {:ok, input} = File.read(inputPath);
     lines = String.split(input, "\r\n") |> Enum.filter(fn x -> x != "" end)
     _ = lines
 
-    res = 1+1
+    res=1+1
     res
   end
 
@@ -31,7 +36,8 @@ defmodule ActiveDay15 do
     {:ok, input} = File.read(inputPath);
     lines = String.split(input, "\r\n") |> Enum.filter(fn x -> x != "" end)
     _ = lines
-    res = 1+1
+
+    res=1+1
     res
   end
 end

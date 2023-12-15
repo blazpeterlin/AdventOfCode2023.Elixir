@@ -4,9 +4,9 @@ defmodule Mix.Tasks.ActiveDay do
   def run(_) do
     Mix.Task.run("app.start")
 
-    r1 = ActiveDay15.solve1("lib/input.txt")
+    r1 = ActiveDay16.solve1("lib/input.txt")
     IO.puts(r1);
-    r2 = ActiveDay15.solve2("lib/input.txt")
+    r2 = ActiveDay16.solve2("lib/input.txt")
     IO.puts(r2);
   end
 end

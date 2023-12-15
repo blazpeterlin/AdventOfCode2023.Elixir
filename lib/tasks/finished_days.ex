@@ -12,6 +12,8 @@ defmodule Mix.Tasks.FinishedDays do
       2 -> Day02
       3 -> Day03
       4 -> Day04
+      14 -> Day14
+      15 -> Day15
     end
 
     dayStr = day |> Integer.to_string |> String.pad_leading(2, "0")
